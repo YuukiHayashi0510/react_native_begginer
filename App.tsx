@@ -1,13 +1,52 @@
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, View, FlatList, SafeAreaView } from 'react-native'
+import { StyleSheet, FlatList, SafeAreaView } from 'react-native'
 import ListItem from './components/ListItem'
-import articles from './dummies/articles.json'
+import Constants from 'expo-constants'
+import { useState } from 'react'
+import { useEffect } from 'react'
+import axios from 'axios'
 
-export default function App() {
+const URL = `https://newsapi.org/v2/top-headlines?country=jp&category=business&apiKey=${
+  Constants.manifest!.extra!.newsApiKey
+}`
+
+type Article = {
+  author: string
+  title: string
+  urlToImage: string
+  publishedAt: string
+}
+
+const App = () => {
+  const [articleList, setArticleList] = useState<Article[]>()
+
+  useEffect(() => {
+    const f = async () => {
+      const { isError, response } = await fetchArticleList()
+      if (!isError) setArticleList(response['data']['articles'])
+      else alert(response)
+    }
+    f()
+  }, [])
+
+  const fetchArticleList = async () => {
+    let response: any = undefined
+    let isError: boolean = false
+
+    try {
+      response = await axios.get(URL)
+    } catch (err: any) {
+      console.error(response)
+      isError = true
+    }
+
+    return { isError, response }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={articles}
+        data={articleList}
         renderItem={({ item }) => (
           <ListItem
             imageUrl={item.urlToImage}
@@ -28,3 +67,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 })
+
+export default App
