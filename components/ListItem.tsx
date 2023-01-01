@@ -1,14 +1,15 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 
 type Props = {
   imageUrl: string
   title: string
   author: string
+  onPress: () => void
 }
 
 const ListItem: React.FC<Props> = (props) => {
   return (
-    <View style={styles.itemContainer}>
+    <TouchableOpacity style={styles.itemContainer} onPress={props.onPress}>
       <View style={styles.leftContainer}>
         <Image
           source={{ uri: props.imageUrl }}
@@ -21,7 +22,7 @@ const ListItem: React.FC<Props> = (props) => {
         </Text>
         <Text style={styles.subText}>{props.author}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 
